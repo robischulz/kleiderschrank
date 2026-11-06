@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Kleiderschrank">
+  <meta name="theme-color" content="#f6efe9" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1c1716" media="(prefers-color-scheme: dark)">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/icon-180.png">
+  <link rel="icon" type="image/png" href="icons/icon-192.png">
+  <link rel="stylesheet" href="style.css">
+  <title>Kleiderschrank</title>
+</head>
+<body>
+
+<!-- ============ Galerie ============ -->
+<div id="app">
+  <header class="topbar">
+    <button id="btnAdd" class="icon-btn" aria-label="Kleidungsstück hinzufügen">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+    </button>
+    <h1>Kleiderschrank</h1>
+    <button id="btnMenu" class="icon-btn" aria-label="Menü">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
+      <span id="menuDot" class="dot" hidden></span>
+    </button>
+  </header>
+
+  <div id="installHint" class="install-hint" hidden>
+    <span>Tipp: In Safari auf <b>Teilen</b> → <b>Zum Home-Bildschirm</b> tippen, dann ist der Kleiderschrank eine App.</span>
+    <button id="installHintClose" aria-label="Hinweis schließen">✕</button>
+  </div>
+
+  <main id="stage">
+    <div id="outfit" hidden>
+      <div class="field" data-slot="top"><div class="track"></div><span class="label"></span></div>
+      <div class="field" data-slot="bottom"><div class="track"></div><span class="label"></span></div>
+      <div class="field" data-slot="dress" hidden><div class="track"></div><span class="label"></span></div>
+      <div class="field" data-slot="shoes"><div class="track"></div><span class="label"></span></div>
+    </div>
+
+    <div id="empty" class="empty" hidden>
+      <div class="empty-icon">
+        <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 14a5 5 0 1 1 5 5c-2 0-5 1.5-5 4v3M32 26 8 42c-2 1.4-1 4 1.5 4h45c2.5 0 3.5-2.6 1.5-4L32 26Z"/></svg>
+      </div>
+      <h2>Dein Kleiderschrank ist noch leer</h2>
+      <p>Tippe oben links auf <b>+</b> und mach ein Spiegelselfie von deinem Outfit.</p>
+      <button id="btnEmptyAdd" class="pill primary">Erstes Outfit fotografieren</button>
+    </div>
+  </main>
+
+  <footer class="controls" id="controls" hidden>
+    <button id="btnDress" class="pill" aria-pressed="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6l-1 4 4 13H6l4-13-1-4Z"/></svg>
+      Kleider
+    </button>
+    <button id="btnRandom" class="pill primary">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9" cy="9" r="1.2" class="fill"/><circle cx="15" cy="15" r="1.2" class="fill"/><circle cx="15" cy="9" r="1.2" class="fill"/><circle cx="9" cy="15" r="1.2" class="fill"/></svg>
+      Zufall
+    </button>
+  </footer>
+</div>
+
+<!-- ============ Kamera ============ -->
+<section id="camera" class="screen dark" hidden>
+  <div class="cam-top">
+    <button id="camClose" class="icon-btn light" aria-label="Kamera schließen">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+    <span class="cam-hint">Handy vors Gesicht halten,<br>ganzer Körper in den Umriss</span>
+    <button id="camFlip" class="icon-btn light" aria-label="Kamera wechseln">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h12l-3-3M20 15H8l3 3"/></svg>
+    </button>
+  </div>
+
+  <div class="frame-wrap">
+    <div class="frame" id="camFrame">
+      <video id="camVideo" playsinline muted autoplay></video>
+      <svg class="overlay" viewBox="0 0 300 500" preserveAspectRatio="none" aria-hidden="true">
+        <g class="guides"></g>
+        <g class="silhouette">
+          <ellipse cx="150" cy="36" rx="21" ry="27"/>
+          <path id="half" d="M150 268 C156 300 160 340 161 372 C162 410 161 440 160 462 L160 490 L194 492 C196 480 186 474 180 462 C182 420 188 390 186 370 C192 330 198 290 196 254 C194 232 186 220 188 205 C190 180 194 150 194 122 C198 150 200 190 204 232 C205 248 206 258 210 264 C216 270 224 264 222 252 C220 220 216 150 210 100 C206 84 196 78 172 74 C166 72 164 68 164 60"/>
+          <use href="#half" transform="translate(300 0) scale(-1 1)"/>
+          <rect class="phone" x="133" y="16" width="34" height="50" rx="6"/>
+        </g>
+      </svg>
+      <div id="camMsg" class="cam-msg" hidden></div>
+      <div id="flash" class="flash"></div>
+    </div>
+  </div>
+
+  <div class="cam-bar">
+    <button id="camLibrary" class="icon-btn light" aria-label="Foto aus der Mediathek wählen">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 16 5-5 4 4 3-3 6 6"/><circle cx="16" cy="9" r="1.5"/></svg>
+    </button>
+    <button id="camShutter" class="shutter" aria-label="Foto aufnehmen"><span></span></button>
+    <span class="spacer"></span>
+  </div>
+  <input type="file" id="fileLibrary" accept="image/*" hidden>
+</section>
+
+<!-- ============ Vorschau nach der Aufnahme ============ -->
+<section id="review" class="screen dark" hidden>
+  <div class="cam-top">
+    <button id="revClose" class="icon-btn light" aria-label="Kamera schließen">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+    <span class="cam-hint">So wird dein Outfit aufgeteilt</span>
+    <span class="spacer"></span>
+  </div>
+
+  <div class="frame-wrap">
+    <div class="frame">
+      <img id="revImg" alt="Aufgenommenes Foto">
+      <svg class="overlay" viewBox="0 0 300 500" preserveAspectRatio="none" aria-hidden="true">
+        <g class="guides"></g>
+      </svg>
+    </div>
+  </div>
+
+  <div class="rev-bar">
+    <button id="revRetake" class="pill ghost">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v5h5"/></svg>
+      Wiederholen
+    </button>
+    <button id="revDress" class="pill ghost toggle" aria-pressed="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6l-1 4 4 13H6l4-13-1-4Z"/></svg>
+      Ist ein Kleid
+    </button>
+    <button id="revAdd" class="pill primary">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>
+      Hinzufügen
+    </button>
+  </div>
+</section>
+
+<!-- ============ Aktionsblatt ============ -->
+<div id="sheet" class="sheet" hidden>
+  <div class="sheet-backdrop"></div>
+  <div class="sheet-panel" role="dialog" aria-modal="true">
+    <div class="sheet-title"></div>
+    <div class="sheet-actions"></div>
+    <button class="sheet-cancel">Abbrechen</button>
+  </div>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<input type="file" id="fileRestore" accept="application/json,.json" hidden>
+
+<script src="app.js"></script>
+</body>
+</html>
