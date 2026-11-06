@@ -1,12 +1,12 @@
 {
-  "name": "Kleiderschrank",
+  "name": "Kleiderschrank der Mua",
   "short_name": "Kleiderschrank",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#f6efe9",
-  "theme_color": "#f6efe9",
+  "background_color": "#f3eff6",
+  "theme_color": "#f3eff6",
   "lang": "de",
   "icons": [
     { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },

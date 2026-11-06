@@ -7,15 +7,29 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Kleiderschrank">
-  <meta name="theme-color" content="#f6efe9" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#1c1716" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f3eff6" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#17131b" media="(prefers-color-scheme: dark)">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icons/icon-180.png">
   <link rel="icon" type="image/png" href="icons/icon-192.png">
   <link rel="stylesheet" href="style.css">
-  <title>Kleiderschrank</title>
+  <title>Kleiderschrank der Mua</title>
 </head>
 <body>
+
+<!-- ============ Passwort ============ -->
+<section id="lock" class="lock">
+  <form id="lockForm" class="lock-box" autocomplete="off">
+    <div class="lock-icon">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+    </div>
+    <h1>Kleiderschrank der Mua</h1>
+    <p>Dieser Kleiderschrank gehört der Mua.<br>Bitte das Passwort eingeben.</p>
+    <input id="lockInput" type="password" inputmode="text" autocapitalize="characters" autocorrect="off" spellcheck="false" placeholder="Passwort" aria-label="Passwort">
+    <div id="lockError" class="lock-error" aria-live="polite"></div>
+    <button type="submit" class="pill primary">Öffnen</button>
+  </form>
+</section>
 
 <!-- ============ Galerie ============ -->
 <div id="app">
@@ -23,32 +37,32 @@
     <button id="btnAdd" class="icon-btn" aria-label="Kleidungsstück hinzufügen">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
     </button>
-    <h1>Kleiderschrank</h1>
+    <h1>Kleiderschrank der Mua</h1>
     <button id="btnMenu" class="icon-btn" aria-label="Menü">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.6" class="fill"/><circle cx="12" cy="12" r="1.6" class="fill"/><circle cx="19" cy="12" r="1.6" class="fill"/></svg>
       <span id="menuDot" class="dot" hidden></span>
     </button>
   </header>
 
   <div id="installHint" class="install-hint" hidden>
-    <span>Tipp: In Safari auf <b>Teilen</b> → <b>Zum Home-Bildschirm</b> tippen, dann ist der Kleiderschrank eine App.</span>
+    <span>Tipp für die Mua: In Safari auf <b>Teilen</b> → <b>Zum Home-Bildschirm</b> tippen, dann wird der Kleiderschrank zur App.</span>
     <button id="installHintClose" aria-label="Hinweis schließen">✕</button>
   </div>
 
   <main id="stage">
     <div id="outfit" hidden>
-      <div class="field" data-slot="top"><div class="track"></div><span class="label"></span></div>
-      <div class="field" data-slot="bottom"><div class="track"></div><span class="label"></span></div>
-      <div class="field" data-slot="dress" hidden><div class="track"></div><span class="label"></span></div>
-      <div class="field" data-slot="shoes"><div class="track"></div><span class="label"></span></div>
+      <div class="field" data-slot="top"></div>
+      <div class="field" data-slot="bottom"></div>
+      <div class="field" data-slot="dress" hidden></div>
+      <div class="field" data-slot="shoes"></div>
     </div>
 
     <div id="empty" class="empty" hidden>
       <div class="empty-icon">
         <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 14a5 5 0 1 1 5 5c-2 0-5 1.5-5 4v3M32 26 8 42c-2 1.4-1 4 1.5 4h45c2.5 0 3.5-2.6 1.5-4L32 26Z"/></svg>
       </div>
-      <h2>Dein Kleiderschrank ist noch leer</h2>
-      <p>Tippe oben links auf <b>+</b> und mach ein Spiegelselfie von deinem Outfit.</p>
+      <h2>Der Kleiderschrank der Mua ist leer</h2>
+      <p>Freundin kann oben links auf <b>+</b> drücken und ein Spiegelselfie mit ihrem Outfit machen.</p>
       <button id="btnEmptyAdd" class="pill primary">Erstes Outfit fotografieren</button>
     </div>
   </main>
@@ -71,7 +85,7 @@
     <button id="camClose" class="icon-btn light" aria-label="Kamera schließen">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
     </button>
-    <span class="cam-hint">Handy vors Gesicht halten,<br>ganzer Körper in den Umriss</span>
+    <span class="cam-hint">Die Mua hält das Handy vors Gesicht<br>und passt ganz in den Umriss</span>
     <button id="camFlip" class="icon-btn light" aria-label="Kamera wechseln">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h12l-3-3M20 15H8l3 3"/></svg>
     </button>
@@ -80,13 +94,17 @@
   <div class="frame-wrap">
     <div class="frame" id="camFrame">
       <video id="camVideo" playsinline muted autoplay></video>
+      <!-- Der innere Bereich (camSave) wird gespeichert, der Rand außen herum nur abgedunkelt angezeigt. -->
       <svg class="overlay" viewBox="0 0 300 500" preserveAspectRatio="none" aria-hidden="true">
-        <g class="guides"></g>
-        <g class="silhouette">
-          <ellipse cx="150" cy="36" rx="21" ry="27"/>
-          <path id="half" d="M150 268 C156 300 160 340 161 372 C162 410 161 440 160 462 L160 490 L194 492 C196 480 186 474 180 462 C182 420 188 390 186 370 C192 330 198 290 196 254 C194 232 186 220 188 205 C190 180 194 150 194 122 C198 150 200 190 204 232 C205 248 206 258 210 264 C216 270 224 264 222 252 C220 220 216 150 210 100 C206 84 196 78 172 74 C166 72 164 68 164 60"/>
-          <use href="#half" transform="translate(300 0) scale(-1 1)"/>
-          <rect class="phone" x="133" y="16" width="34" height="50" rx="6"/>
+        <path id="camOutside" class="outside" fill-rule="evenodd" d=""/>
+        <g id="camSave">
+          <g class="guides"></g>
+          <g class="silhouette">
+            <ellipse cx="150" cy="36" rx="21" ry="27"/>
+            <path id="half" d="M150 268 C156 300 160 340 161 372 C162 410 161 440 160 462 L160 490 L194 492 C196 480 186 474 180 462 C182 420 188 390 186 370 C192 330 198 290 196 254 C194 232 186 220 188 205 C190 180 194 150 194 122 C198 150 200 190 204 232 C205 248 206 258 210 264 C216 270 224 264 222 252 C220 220 216 150 210 100 C206 84 196 78 172 74 C166 72 164 68 164 60"/>
+            <use href="#half" transform="translate(300 0) scale(-1 1)"/>
+            <rect class="phone" x="133" y="16" width="34" height="50" rx="6"/>
+          </g>
         </g>
       </svg>
       <div id="camMsg" class="cam-msg" hidden></div>
@@ -110,7 +128,7 @@
     <button id="revClose" class="icon-btn light" aria-label="Kamera schließen">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
     </button>
-    <span class="cam-hint">So wird dein Outfit aufgeteilt</span>
+    <span class="cam-hint">So wird das Outfit der Mua aufgeteilt</span>
     <span class="spacer"></span>
   </div>
 

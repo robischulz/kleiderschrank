@@ -1,5 +1,5 @@
 // Offline-Speicher für die App-Dateien. Bei Änderungen an der App die Versionsnummer erhöhen.
-const CACHE = 'kleiderschrank-v1';
+const CACHE = 'kleiderschrank-v2';
 const ASSETS = [
   './',
   'index.html',
