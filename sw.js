@@ -1,18 +1,25 @@
-// Offline-Speicher für die App-Dateien. Bei Änderungen an der App die Versionsnummer erhöhen.
-const CACHE = 'kleiderschrank-v2';
+// Offline-Speicher für die App-Dateien.
+// Bei Änderungen an der App: VERSION hier UND die ?v=… Nummern in index.html erhöhen.
+const VERSION = 3;
+const CACHE = 'kleiderschrank-v' + VERSION;
 const ASSETS = [
   './',
   'index.html',
-  'style.css',
-  'app.js',
+  `style.css?v=${VERSION}`,
+  `app.js?v=${VERSION}`,
   'manifest.webmanifest',
   'icons/icon-180.png',
   'icons/icon-192.png',
   'icons/icon-512.png',
 ];
 
+// Beim Installieren alles frisch vom Server holen (am Browser-Cache vorbei).
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));
+  e.waitUntil(
+    caches.open(CACHE)
+      .then(c => c.addAll(ASSETS.map(u => new Request(u, { cache: 'reload' }))))
+      .then(() => self.skipWaiting())
+  );
 });
 
 self.addEventListener('activate', e => {
@@ -23,18 +30,30 @@ self.addEventListener('activate', e => {
   );
 });
 
-// Erst aus dem Speicher antworten (funktioniert offline), im Hintergrund aktualisieren.
+// Mit Internet: immer die aktuelle Version vom Server (und für offline merken).
+// Ohne Internet (oder wenn der Server zu lange braucht): die gespeicherte Version.
 self.addEventListener('fetch', e => {
   const req = e.request;
-  if (req.method !== 'GET' || new URL(req.url).origin !== location.origin) return;
-  e.respondWith(
-    caches.open(CACHE).then(async cache => {
-      const cached = await cache.match(req, { ignoreSearch: true })
-        || (req.mode === 'navigate' ? await cache.match('index.html') : undefined);
-      const network = fetch(req)
-        .then(res => { if (res.ok) cache.put(req, res.clone()); return res; })
-        .catch(() => cached);
-      return cached || network;
-    })
-  );
+  const url = new URL(req.url);
+  if (req.method !== 'GET' || url.origin !== location.origin) return;
+
+  e.respondWith((async () => {
+    const cache = await caches.open(CACHE);
+    const fromCache = async () =>
+      (await cache.match(req)) ||
+      (await cache.match(req, { ignoreSearch: true })) ||
+      (req.mode === 'navigate' ? await cache.match('index.html') : undefined);
+
+    try {
+      const res = await Promise.race([
+        fetch(req.url, { cache: 'no-cache', credentials: 'same-origin' }),
+        new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 5000)),
+      ]);
+      if (res.ok) cache.put(req, res.clone());
+      return res;
+    } catch {
+      const cached = await fromCache();
+      return cached || Response.error();
+    }
+  })());
 });

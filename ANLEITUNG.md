@@ -23,5 +23,5 @@ Jeder Push auf `main` aktualisiert die Seite nach etwa einer Minute.
 
 ## Wichtig
 - Wird die App vom Home-Bildschirm gelöscht, sind die Fotos weg. Vorher ein Backup machen.
-- Nach Änderungen an der App: in `sw.js` die Versionsnummer (`kleiderschrank-v2` → `v3`) erhöhen
+- Nach Änderungen an der App: in `sw.js` `VERSION` und in `index.html` die `?v=`-Nummern erhöhen
   und den Ordner neu hochladen. Die App aktualisiert sich dann beim nächsten Start.
